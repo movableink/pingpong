@@ -17,7 +17,7 @@
 
 Slack = require('slack-client')
 
-token = '' # Add a bot at https://my.slack.com/services/new/bot and copy the token here.
+token = process.env.SLACK_TOKEN # Add a bot at https://my.slack.com/services/new/bot and copy the token here.
 autoReconnect = true
 autoMark = true
 
