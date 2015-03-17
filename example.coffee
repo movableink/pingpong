@@ -1,20 +1,3 @@
-# This is a simple example of how to use the slack-client module in CoffeeScript. It creates a
-# bot that responds to all messages in all channels it is in with a reversed
-# string of the text received.
-#
-# To run, copy your token below, then, from the project root directory:
-#
-# To run the script directly
-#    npm install
-#    node_modules/coffee-script/bin/coffee examples/simple_reverse.coffee
-#
-# If you want to look at / run / modify the compiled javascript
-#    npm install
-#    node_modules/coffee-script/bin/coffee -c examples/simple_reverse.coffee
-#    cd examples
-#    node simple_reverse.js
-#
-
 Slack = require('slack-client')
 express = require('express')
 bodyParser = require('body-parser')
@@ -67,6 +50,18 @@ _challenge = (userId, opponentId) ->
     dmChannel = slack.getChannelGroupOrDMByID(dm.channel.id)
     dmChannel.send "You have been challenged by #{opponent.name}"
 
+allChallenges = ->
+  if challenges.length == 0
+    "No Challenges"
+  else
+    text = "All Challenges\n"
+    for {challenger, opponent} in challenges
+      challengerUser = getUserFromID(challenger)
+      opponentUser = getUserFromID(opponent)
+      text += "#{challengerUser.name} vs #{opponentUser.name}\n"
+
+    text
+
 slack.on 'message', (message) ->
   console.log message
   {type, ts, text} = message
@@ -84,6 +79,8 @@ slack.on 'message', (message) ->
             channels.test.send "accepted"
         else
           console.log "no match with '#{text}'"
+    else if text.match(/challenges/)
+      channels.test.send(allChallenges())
     else
       console.log "no mention"
 
