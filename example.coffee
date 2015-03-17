@@ -45,8 +45,13 @@ _accept = (opponentId, challengerId) ->
     else
       challenger = getUserFromID(openChallenges[0].challenger)
     channels.test.send "#{opponent.name} accepted challenge from #{challenger.name}"
-  else if openChallenges.length > 1
-
+  else if openChallenges.length > 1 && challengerId
+    challenge = _.filter openChallenges, ({challenger, opponent}) ->
+      opponentId == opponent && challengerId == challenger
+    if challenge
+      challenger = getUserFromID(challengerId)
+      opponent = getUserFromID(opponentId)
+      channels.test.send "#{opponent.name} accepted challenge from #{challenger.name}"
   else
     console.log "accept borked"
 
