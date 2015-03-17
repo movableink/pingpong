@@ -18,6 +18,7 @@
 Slack = require('slack-client')
 express = require('express')
 bodyParser = require('body-parser')
+_ = require('underscore')
 
 token = process.env.SLACK_TOKEN # Add a bot at https://my.slack.com/services/new/bot and copy the token here.
 autoReconnect = true
@@ -28,11 +29,12 @@ slack = new Slack(token, autoReconnect, autoMark)
 users = {}
 channels = {}
 challenges = []
+
 slack.on 'open', ->
   channel = slack.getChannelByName('test')
   channels.test = channel
   # channel.sendMessage "hello world"
-  # channels.test.send "PINGBOT IS HERE"
+  console.log "PINGPONG BOT IS CONNECTED"
 
   #   groups = []
 #   unreads = slack.getUnreadCount()
@@ -43,7 +45,6 @@ slack.on 'open', ->
 #   # Get all groups that are open and not archived
 #   groups = (group.name for id, group of slack.groups when group.is_open and not group.is_archived)
 
-  console.log "Welcome to Slack. You are @#{slack.self.name} of #{slack.team.name}"
   # console.log 'As well as: ' + groups.join(', ')
 
 #   messages = if unreads is 1 then 'message' else 'messages'
@@ -55,7 +56,7 @@ getUserFromID = (id) ->
   users[id] = user
   user
 
-challenge = (message, mentionedUsers) ->
+_challenge = (message, mentionedUsers) ->
   user = getUserFromID(message.user)
   opponent = getUserFromID(mentionedUsers[0].slice(2, -1))
   response = "#{user.name} has challenged #{opponent.name}!!!"
@@ -74,9 +75,15 @@ slack.on 'message', (message) ->
     mentionedUsers = text.match(/<@\w+>/)
     # if text.indexOf('challenge') > -1 && mentionedUsers.length == 1
     if mentionedUsers?.length == 1
-      switch text
-        when text.match(/challenge/)
-          challenge(message, mentionedUsers)
+        if text.match(/challenge/)
+          _challenge(message, mentionedUsers)
+        else if text.match(/accept/)
+          challenge = _.filter challenges, ({challenger, opponent}) ->
+            message.user == opponent
+          if challenge
+            channels.test.send "accepted"
+        else
+          console.log "no match with '#{text}'"
     else
       console.log "no mention"
 
