@@ -3,7 +3,13 @@ express = require('express')
 bodyParser = require('body-parser')
 _ = require('underscore')
 
-token = process.env.SLACK_TOKEN
+token = process.env.TOKEN
+channelName = process.env.CHANNEL
+unless channelName
+  console.log "missing CHANNEL on command line"
+  process.exit()
+
+process.title = "pingpong slack bot"
 autoReconnect = true
 autoMark = true
 
@@ -15,7 +21,7 @@ challenges = []
 leaderboard = []
 
 slack.on 'open', ->
-  channel = slack.getChannelByName('ping-pong')
+  channel = slack.getChannelByName(channelName)
   channels.test = channel
   console.log "PINGPONG BOT IS CONNECTED"
 
@@ -28,9 +34,9 @@ _helpText =
   """
   `/challenge @user` to challenge `@user` ANYWHERE
 
-  Pro-Tip: All commands can either be sent to `#ping-pong` or DM to `@pingpong` privately
+  Pro-Tip: All commands can either be sent to `##{channelName}` or DM to `@pingpong` privately
   `leaderboard` to see the results of the last matches
-  `challenge @user` to challenge `@user` in `#ping-pong`
+  `challenge @user` to challenge `@user` in `##{channelName}`
   `challenges` to view all challenges
   `accept @user` to accept a challenge from someone
   `accept` to accept the latest challenge
