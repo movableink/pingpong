@@ -1,0 +1,22 @@
+{
+  "name": "pingpong",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/movableink/pingpong.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/movableink/pingpong/issues"
+  },
+  "homepage": "https://github.com/movableink/pingpong",
+  "dependencies": {
+    "slack-client": "^1.4.0"
+  }
+}
