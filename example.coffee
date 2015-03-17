@@ -50,6 +50,12 @@ _challenge = (userId, opponentId) ->
     dmChannel = slack.getChannelGroupOrDMByID(dm.channel.id)
     dmChannel.send "You have been challenged by #{opponent.name}"
 
+_accept = (user) ->
+  challenge = _.filter challenges, ({challenger, opponent}) ->
+    user == opponent
+  if challenge
+    channels.test.send "accepted"
+
 allChallenges = ->
   if challenges.length == 0
     "No Challenges"
@@ -73,10 +79,7 @@ slack.on 'message', (message) ->
         if text.match(/challenge/)
           _challenge(message.user, mentionedUsers[0].slice(2, -1))
         else if text.match(/accept/)
-          challenge = _.filter challenges, ({challenger, opponent}) ->
-            message.user == opponent
-          if challenge
-            channels.test.send "accepted"
+          _accept(message.user)
         else
           console.log "no match with '#{text}'"
     else if text.match(/challenges/)
