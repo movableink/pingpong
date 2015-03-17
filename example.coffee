@@ -6,16 +6,18 @@
 #
 # To run the script directly
 #    npm install
-#    node_modules/coffee-script/bin/coffee examples/simple_reverse.coffee 
+#    node_modules/coffee-script/bin/coffee examples/simple_reverse.coffee
 #
 # If you want to look at / run / modify the compiled javascript
 #    npm install
-#    node_modules/coffee-script/bin/coffee -c examples/simple_reverse.coffee 
+#    node_modules/coffee-script/bin/coffee -c examples/simple_reverse.coffee
 #    cd examples
 #    node simple_reverse.js
 #
 
 Slack = require('slack-client')
+express = require('express')
+bodyParser = require('body-parser')
 
 token = process.env.SLACK_TOKEN # Add a bot at https://my.slack.com/services/new/bot and copy the token here.
 autoReconnect = true
@@ -31,14 +33,14 @@ slack.on 'open', ->
   channels.test = channel
   # channel.sendMessage "hello world"
   # channels.test.send "PINGBOT IS HERE"
-  
+
   #   groups = []
 #   unreads = slack.getUnreadCount()
 
 #   # Get all the channels that bot is a member of
 #   channels = ("##{channel.name}" for id, channel of slack.channels when channel.is_member)
 
-#   # Get all groups that are open and not archived 
+#   # Get all groups that are open and not archived
 #   groups = (group.name for id, group of slack.groups when group.is_open and not group.is_archived)
 
   console.log "Welcome to Slack. You are @#{slack.self.name} of #{slack.team.name}"
@@ -99,7 +101,7 @@ slack.on 'message', (message) ->
 #       @#{slack.self.name} responded with "#{response}"
 #     """
 #   else
-#     #this one should probably be impossible, since we're in slack.on 'message' 
+#     #this one should probably be impossible, since we're in slack.on 'message'
 #     typeError = if type isnt 'message' then "unexpected type #{type}." else null
 #     #Can happen on delete/edit/a few other events
 #     textError = if not text? then 'text was undefined.' else null
@@ -117,5 +119,17 @@ slack.on 'message', (message) ->
 slack.on 'error', (error) ->
   console.error "Error: #{JSON.stringify(error)}"
 
-
 slack.login()
+
+app = express()
+urlEncodedParser = bodyParser.urlencoded(extended: false)
+
+app.post '/challenge', urlEncodedParser, (req, res) ->
+  challengerName = req.body.user_name
+  challengerId = req.body.user_id
+  opponentName = req.body.text.match(/@\w+/)[0].replace('@', '')
+  opponentId = slack.getUserByName(opponentName).id
+
+  console.log "#{opponentName} (#{opponentId}) has been challenged by #{challengerName} (#{challengerId})"
+
+server = app.listen(1337)

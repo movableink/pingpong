@@ -17,6 +17,8 @@
   },
   "homepage": "https://github.com/movableink/pingpong",
   "dependencies": {
-    "slack-client": "^1.4.0"
+    "slack-client": "^1.4.0",
+    "body-parser": "~1.12.2",
+    "express": "~4.12.2"
   }
 }
