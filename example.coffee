@@ -80,7 +80,8 @@ slack.on 'message', (message) ->
         else
           console.log "no match with '#{text}'"
     else if text.match(/challenges/)
-      channels.test.send(allChallenges())
+      fromChan = slack.getChannelGroupOrDMByID(message.channel)
+      fromChan.send(allChallenges())
     else
       console.log "no mention"
 
