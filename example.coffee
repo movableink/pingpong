@@ -12,6 +12,7 @@ slack = new Slack(token, autoReconnect, autoMark)
 users = {}
 channels = {}
 challenges = []
+leaderboard = []
 
 slack.on 'open', ->
   channel = slack.getChannelByName('test')
@@ -56,6 +57,27 @@ _accept = (user) ->
   if challenge
     channels.test.send "accepted"
 
+_leaderboard = ->
+  if leaderboard.length == 0
+    "No Matches Played"
+  else
+    text = "Latest Matches :trophy:\n"
+    for score in leaderboard
+      text += printScore(score)
+
+    text
+
+printScore = ({winner, loser, score}) ->
+  "#{winner.name} beat #{loser.name} #{score if score}\n"
+
+_win = (winnerID, loserID, text) ->
+  winner = getUserFromID(winnerID)
+  loser = getUserFromID(loserID)
+  matchScore = text.match(/\d+\-\d+/)?[0]
+  score = {winner: winner, loser: loser, score: matchScore}
+  leaderboard.push(score)
+  printScore(score)
+
 allChallenges = ->
   if challenges.length == 0
     "No Challenges"
@@ -73,18 +95,25 @@ slack.on 'message', (message) ->
   {type, ts, text} = message
 
   if type is 'message' and text?
-    mentionedUsers = text.match(/<@\w+>/)
-    # if text.indexOf('challenge') > -1 && mentionedUsers.length == 1
+    mentionedUsers = text.match(/\<\@(\w+)\>.+?\<\@(\w+)\>/)?.slice(1)
+
     if mentionedUsers?.length == 1
         if text.match(/challenge/)
-          _challenge(message.user, mentionedUsers[0].slice(2, -1))
+          _challenge(message.user, mentionedUsers[0])
         else if text.match(/accept/)
           _accept(message.user)
         else
           console.log "no match with '#{text}'"
+    else if mentionedUsers?.length == 2
+      if text.match(/beat/)
+        score = _win(mentionedUsers[0], mentionedUsers[1], text)
+        channels.test.send(":trophy: #{score}")
     else if text.match(/challenges/)
       fromChan = slack.getChannelGroupOrDMByID(message.channel)
       fromChan.send(allChallenges())
+    else if text.match(/leaderboard/)
+      fromChan = slack.getChannelGroupOrDMByID(message.channel)
+      fromChan.send(_leaderboard())
     else
       console.log "no mention"
 
