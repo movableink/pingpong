@@ -126,7 +126,7 @@ slack.on 'message', (message) ->
       if text.match(/beat/)
         score = _win(mentionedUsers[0], mentionedUsers[1], text)
         channels.test.send(":trophy: #{score}")
-    else if text == "help"
+    else if text == "help" || text == "halp"
       fromChan = slack.getChannelGroupOrDMByID(message.channel)
       fromChan.send(_helpText())
     else
