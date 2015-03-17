@@ -40,8 +40,13 @@ _accept = (opponentId, challengerId) ->
     opponentId == opponent
   if openChallenges.length == 1
     opponent = getUserFromID(opponentId)
-    challenger = getUserFromID(challengerId)
+    if challengerId
+      challenger = getUserFromID(challengerId)
+    else
+      challenger = getUserFromID(openChallenges[0].challenger)
     channels.test.send "#{opponent.name} accepted challenge from #{challenger.name}"
+  else if openChallenges.length > 1
+
   else
     console.log "accept borked"
 
@@ -86,7 +91,7 @@ slack.on 'message', (message) ->
     mentionedUsers = text.match(/\<\@\w+\>/g)?.map (i) -> i.replace('<@', '').replace('>', '')
 
     if text.match(/accept/)
-      if mentionedUsers[0]
+      if mentionedUsers?[0]
         _accept(message.user, mentionedUsers[0])
       else
         _accept(message.user)
