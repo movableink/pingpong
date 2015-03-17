@@ -33,7 +33,7 @@ _challenge = (userId, opponentId) ->
 
   slack.openDM opponent.id, (dm) ->
     dmChannel = slack.getChannelGroupOrDMByID(dm.channel.id)
-    dmChannel.send "You have been challenged by #{opponent.name}"
+    dmChannel.send "You have been challenged by #{user.name}"
 
 _accept = (opponentId, challengerId) ->
   openChallenges = _.filter challenges, ({challenger, opponent}) ->
@@ -84,7 +84,6 @@ allChallenges = ->
     text
 
 slack.on 'message', (message) ->
-  console.log message
   {type, ts, text} = message
 
   if type is 'message' and text?
