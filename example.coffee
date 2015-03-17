@@ -78,7 +78,7 @@ _leaderboard = ->
     text
 
 printScore = ({winner, loser, score}) ->
-  "#{winner.name} beat #{loser.name} #{score if score}\n"
+  "#{winner.name} beat #{loser.name} #{score || ''}\n"
 
 _win = (winnerID, loserID, text) ->
   winner = getUserFromID(winnerID)
