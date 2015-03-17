@@ -23,8 +23,9 @@ autoMark = true
 
 slack = new Slack(token, autoReconnect, autoMark)
 
-
+users = {}
 channels = {}
+
 slack.on 'open', ->
   channel = slack.getChannelByName('test')
   channels.test = channel
@@ -47,16 +48,25 @@ slack.on 'open', ->
 
 #   console.log "You have #{unreads} unread #{messages}"
 
+getUserFromID = (id) ->
+  user = users[id] || slack.getUserByID(id)
+  users[id] = user
+  user
 
 slack.on 'message', (message) ->
-  console.log message
-  testChannel = channels.test
-  testChannel.send "I heard you..."
+  {type, ts, text} = message
+
+  if type is 'message' and text?
+    mentionedUsers = text.match(/<@\w+>/)
+    if text.indexOf('challenge') > -1 && mentionedUsers.length == 1
+      user = getUserFromID(message.user)
+      opponent = getUserFromID( mentionedUsers[0].slice(2, -1))
+      response = "#{user.name} has challenged #{opponent.name}!!!"
+      channels.test.send response
+
 #   channel = slack.getChannelGroupOrDMByID(message.channel)
 #   user = slack.getUserByID(message.user)
 #   response = ''
-
-#   {type, ts, text} = message
 
 #   channelName = if channel?.is_channel then '#' else ''
 #   channelName = channelName + if channel then channel.name else 'UNKNOWN_CHANNEL'
