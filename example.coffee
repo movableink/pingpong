@@ -15,7 +15,7 @@ challenges = []
 leaderboard = []
 
 slack.on 'open', ->
-  channel = slack.getChannelByName('test')
+  channel = slack.getChannelByName('ping-pong')
   channels.test = channel
   console.log "PINGPONG BOT IS CONNECTED"
 
@@ -28,9 +28,9 @@ _helpText =
   """
   `/challenge @user` to challenge `@user` ANYWHERE
 
-  Pro-Tip: All commands can either be sent to `#pingpong` or DM to `@pingpong` privately
+  Pro-Tip: All commands can either be sent to `#ping-pong` or DM to `@pingpong` privately
   `leaderboard` to see the results of the last matches
-  `challenge @user` to challenge `@user` in `#pingpong`
+  `challenge @user` to challenge `@user` in `#ping-pong`
   `challenges` to view all challenges
   `accept @user` to accept a challenge from someone
   `accept` to accept the latest challenge
