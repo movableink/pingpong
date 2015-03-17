@@ -25,12 +25,12 @@ slack = new Slack(token, autoReconnect, autoMark)
 
 users = {}
 channels = {}
-
+challenges = []
 slack.on 'open', ->
   channel = slack.getChannelByName('test')
   channels.test = channel
   # channel.sendMessage "hello world"
-  channels.test.send "PINGBOT IS HERE"
+  # channels.test.send "PINGBOT IS HERE"
   
   #   groups = []
 #   unreads = slack.getUnreadCount()
@@ -53,20 +53,30 @@ getUserFromID = (id) ->
   users[id] = user
   user
 
+challenge = (message, mentionedUsers) ->
+  user = getUserFromID(message.user)
+  opponent = getUserFromID(mentionedUsers[0].slice(2, -1))
+  response = "#{user.name} has challenged #{opponent.name}!!!"
+  channels.test.send response
+  challenges.push {challenger: user.id, opponent: opponent.id}
+
+  slack.openDM opponent.id, (dm) ->
+    dmChannel = slack.getChannelGroupOrDMByID(dm.channel.id)
+    dmChannel.send "You have been challenged by #{opponent.name}"
+
 slack.on 'message', (message) ->
+  console.log message
   {type, ts, text} = message
 
   if type is 'message' and text?
     mentionedUsers = text.match(/<@\w+>/)
-    if text.indexOf('challenge') > -1 && mentionedUsers.length == 1
-      user = getUserFromID(message.user)
-      opponent = getUserFromID(mentionedUsers[0].slice(2, -1))
-      response = "#{user.name} has challenged #{opponent.name}!!!"
-      channels.test.send response
-
-      slack.openDM opponent.id, (dm) ->
-        dmChannel = slack.getChannelGroupOrDMByID(dm.channel.id)
-        dmChannel.send "You have been challenged by #{opponent.name}"
+    # if text.indexOf('challenge') > -1 && mentionedUsers.length == 1
+    if mentionedUsers?.length == 1
+      switch text
+        when text.match(/challenge/)
+          challenge(message, mentionedUsers)
+    else
+      console.log "no mention"
 
 #   channel = slack.getChannelGroupOrDMByID(message.channel)
 #   user = slack.getUserByID(message.user)
