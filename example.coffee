@@ -24,16 +24,18 @@ getUserFromID = (id) ->
   users[id] = user
   user
 
-_helpText = ->
+_helpText =
   """
+  `/challenge @user` to challenge `@user` ANYWHERE
+
+  Pro-Tip: All commands can either be sent to `#pingpong` or DM to `@pingpong` privately
   `leaderboard` to see the results of the last matches
-  `/challenge @user` or `challenge @user` to challenge someone
+  `challenge @user` to challenge @user in `#pingpong`
   `challenges` to view all challenges
   `accept @user` to accept a challenge from someone
   `accept` to accept the latest challenge
   `@winner beat @loser 2-1` to register a victory
 
-  Pro-Tip: All commands can either be sent to the channel (#test) or directly to @pingpong
   """
 
 _challenge = (userId, opponentId) ->
@@ -128,7 +130,7 @@ slack.on 'message', (message) ->
         channels.test.send(":trophy: #{score}")
     else if text == "help" || text == "halp"
       fromChan = slack.getChannelGroupOrDMByID(message.channel)
-      fromChan.send(_helpText())
+      fromChan.send(_helpText)
     else
       console.log "no mas '#{text}'"
 
