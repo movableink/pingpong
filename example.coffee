@@ -60,9 +60,13 @@ slack.on 'message', (message) ->
     mentionedUsers = text.match(/<@\w+>/)
     if text.indexOf('challenge') > -1 && mentionedUsers.length == 1
       user = getUserFromID(message.user)
-      opponent = getUserFromID( mentionedUsers[0].slice(2, -1))
+      opponent = getUserFromID(mentionedUsers[0].slice(2, -1))
       response = "#{user.name} has challenged #{opponent.name}!!!"
       channels.test.send response
+
+      slack.openDM opponent.id, (dm) ->
+        dmChannel = slack.getChannelGroupOrDMByID(dm.channel.id)
+        dmChannel.send "You have been challenged by #{opponent.name}"
 
 #   channel = slack.getChannelGroupOrDMByID(message.channel)
 #   user = slack.getUserByID(message.user)
