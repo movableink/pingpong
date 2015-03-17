@@ -30,7 +30,7 @@ _helpText =
 
   Pro-Tip: All commands can either be sent to `#pingpong` or DM to `@pingpong` privately
   `leaderboard` to see the results of the last matches
-  `challenge @user` to challenge @user in `#pingpong`
+  `challenge @user` to challenge `@user` in `#pingpong`
   `challenges` to view all challenges
   `accept @user` to accept a challenge from someone
   `accept` to accept the latest challenge
