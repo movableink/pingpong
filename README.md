@@ -47,6 +47,6 @@ Additional API details are [here](https://api.slack.com/bot-users)
   ![slash-label](https://cloud.githubusercontent.com/assets/27777/6855535/9a327d22-d3cf-11e4-86f2-7fdd126e2e05.png)
 
 ### Setup the App
-  1. Clone the repo at https://github.com/movableink/pingpong
+  1. Clone the repo
   2. `npm install`
   3. start it up with `TOKEN={your token} CHANNEL={some channel} coffee app.coffee`
